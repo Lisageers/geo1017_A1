@@ -1,9 +1,14 @@
 import sys
+import numpy as np
 
 file_path = 'data/pointclouds/'
 
+def getDist(vec_A, vec_B):
+    return np.sqrt(np.sum(np.square(vec_A-vec_B)))
+
 def getFeatures (file_num):
 # Features: the area of projection, the height (maximum of z), the number of points
+# Or: x-range, y-range, z-range, and the number of points
     try:
         file_name = str(file_num).zfill(3)+'.xyz'
         point_clouds = open(file_path+file_name, 'r')
@@ -32,7 +37,9 @@ def getFeatures (file_num):
             y_max = y_line
         if z_line > z_max:
             z_max = z_line
-    return (abs(x_max-x_min)*abs(y_max-y_min), z_max, count)
+    return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
+    # return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
+
 
 def Accuracy():
     return

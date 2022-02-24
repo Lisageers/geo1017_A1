@@ -1,8 +1,9 @@
 import Functions
 import Algorithms
+import numpy as np
 
-dict_features = {}
+feature_list = []
 for i in range(500):
-    dict_features[i] = Functions.getFeatures(i)
+    feature_list.append(Functions.getFeatures(i))
 
-print(dict_features)
+print(Algorithms.DBSCAN(feature_list, 200, 5))
