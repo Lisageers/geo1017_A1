@@ -5,6 +5,7 @@ file_path = 'data/pointclouds/'
 
 def getDist(vec_A, vec_B):
     return np.sqrt(np.sum(np.square(vec_A-vec_B)))
+    
 
 def getFeatures (file_num):
     """

@@ -2,12 +2,62 @@ import Functions
 import numpy as np
 import copy
 import random
+import math
 
 def K_Means():
     return
 
-def Hierarchical():
-    return
+def Hierarchical(dataset):
+
+    # put each feature in a separate cluster
+    label_list = [i for i in range(len(dataset))]
+    label_dict = {}
+    for i in range(len(dataset)):
+        label_dict[(i,)] = dataset[i]
+
+    distance_dict = {}
+    for i in range(len(dataset)):
+        for j in range(len(dataset)):
+                distance = Functions.getDist(dataset[i], dataset[j])
+                if i != j:
+                    sorted_indices = sorted([i, j])
+                    distance_dict[((sorted_indices[0],), (sorted_indices[1],))] = distance              
+
+    while len(label_dict.keys()) > 5:
+        # find closest points
+        indexes_closest = min(distance_dict, key=distance_dict.get)
+
+        # update label dict
+        average_c1 = label_dict[indexes_closest[0]]
+        average_c2 = label_dict[indexes_closest[1]]
+        coor_list = []
+        index_list = [element for tupl in indexes_closest for element in tupl]
+        for index in index_list:
+            coor_list.append(dataset[index])
+
+        average_combined = np.mean(np.array(coor_list), axis=0)
+        label_dict[tuple(index_list)] = average_combined
+        
+        label_dict.pop(indexes_closest[0])
+        label_dict.pop(indexes_closest[1])
+
+        # update distance dict
+        distance_dict.pop(indexes_closest)
+        for key in list(distance_dict):
+            if key[0] in indexes_closest:
+                distance_dict.pop(key)
+                distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]])
+            elif key[1] in indexes_closest:
+                distance_dict.pop(key)
+                distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]])
+
+    # convert output to list
+    count = 1
+    for key in label_dict.keys():
+        for index in key:
+            label_list[index] = count
+        count +=1
+    return label_list
 
 
 def findNeighbor(vec_A, dataset, eps):

@@ -11,6 +11,7 @@ feature_list = np.array(feature_list)
 # for i in range(len(feature_list)):
 #     print(feature_list[i])
 
-print(Algorithms.DBSCAN(feature_list, 2.5, 5))
+# print(Algorithms.DBSCAN(feature_list, 2.5, 5))
+print(Algorithms.Hierarchical(feature_list))
 # clustering = DBSCAN(eps=2.5, min_samples=5).fit(feature_list)
 # print(clustering.labels_)
