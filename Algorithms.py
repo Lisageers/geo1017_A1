@@ -18,7 +18,8 @@ def Hierarchical(dataset):
     distance_dict = {}
     for i in range(len(dataset)):
         for j in range(len(dataset)):
-                distance = Functions.getDist(dataset[i], dataset[j])
+                # distance = Functions.getDist(dataset[i], dataset[j])
+                distance = Functions.getManDist(dataset[i], dataset[j])
                 if i != j:
                     sorted_indices = sorted([i, j])
                     distance_dict[((sorted_indices[0],), (sorted_indices[1],))] = distance              
@@ -46,10 +47,12 @@ def Hierarchical(dataset):
         for key in list(distance_dict):
             if key[0] in indexes_closest:
                 distance_dict.pop(key)
-                distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]])
+                # distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]])
+                distance_dict[(tuple(index_list), key[1])] = Functions.getManDist(average_combined, label_dict[key[1]])
             elif key[1] in indexes_closest:
                 distance_dict.pop(key)
-                distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]])
+                # distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]])
+                distance_dict[(tuple(index_list), key[0])] = Functions.getManDist(average_combined, label_dict[key[0]])
 
     # convert output to list
     count = 1
