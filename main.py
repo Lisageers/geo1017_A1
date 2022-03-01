@@ -10,8 +10,13 @@ for i in range(500):
 feature_list = np.array(feature_list)
 # for i in range(len(feature_list)):
 #     print(feature_list[i])
+ground_truth_dict = Functions.ground_truth()
 
-# print(Algorithms.DBSCAN(feature_list, 2.5, 5))
-print(Algorithms.Hierarchical(feature_list))
+# labels_dbscan = Algorithms.DBSCAN(feature_list, 2.5, 5)
+# Functions.Accuracy(labels_dbscan, ground_truth_dict)
+labels_hierarchical = Algorithms.Hierarchical(feature_list)
+# print(labels_hierarchical)
+Functions.Accuracy(labels_hierarchical, ground_truth_dict)
+
 # clustering = DBSCAN(eps=2.5, min_samples=5).fit(feature_list)
 # print(clustering.labels_)

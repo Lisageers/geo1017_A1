@@ -67,6 +67,41 @@ def getFeatures (file_num):
     # return np.array([np.maximum(abs(x_max-x_min), abs(y_max-y_min)), z_max, count/(abs(x_max-x_min)*abs(y_max-y_min))])
     # return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
 
+def ground_truth():
+    ground_truth_dict = {}
+    label = 0
+    for i in range(500):
+        if (i % 100) == 0:
+            label += 1
+            ground_truth_dict[label] = [i]
+        else:
+            ground_truth_dict[label].append(i)
+    return ground_truth_dict
 
-def Accuracy():
+def Accuracy(label_list, ground_truth_dict):
+    # convert list to dictionary
+    cluster_dict = {}
+    for i in range(len(label_list)):
+        # skip outliers
+        if label_list[i] != -1: 
+            # add indices as values to cluster dict, key is label
+            if not label_list[i] in cluster_dict:
+                cluster_dict[label_list[i]] = [i]
+            else:
+                cluster_dict[label_list[i]].append(i)
+
+    # check which cluster resembles the ground truth the most for each ground truth group
+    for key1, value1 in ground_truth_dict.items():
+        max_similar = 0
+        for key2, value2 in cluster_dict.items():
+            # calculate how many indices of the ground truth label are in this cluster
+            similar_count = len([c for c in value2 if c in value1])
+            if similar_count > max_similar:
+                max_similar = similar_count
+                max_label = key2
+        # accuracy is the most similar cluster
+        print(f'Accuracy of ground truth label {key1} is {max_similar}%')
+        # delete most similar cluster
+        if max_similar != 0:
+            cluster_dict.pop(max_label)
     return
