@@ -14,7 +14,7 @@ ground_truth_dict = Functions.ground_truth()
 
 # labels_dbscan = Algorithms.DBSCAN(feature_list, 2.5, 5)
 # Functions.Accuracy(labels_dbscan, ground_truth_dict)
-labels_hierarchical = Algorithms.Hierarchical(feature_list)
+labels_hierarchical = Algorithms.Hierarchical(feature_list, "single")
 # print(labels_hierarchical)
 Functions.Accuracy(labels_hierarchical, ground_truth_dict)
 

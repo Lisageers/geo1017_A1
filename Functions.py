@@ -1,16 +1,27 @@
 import sys
 import numpy as np
+import math
 
 file_path = 'data/pointclouds/'
 
-def getDist(vec_A, vec_B):
-    return np.sqrt(np.sum(np.square(vec_A-vec_B)))
+def getDist(vec_A, vec_B, p, dtype):
+    if dtype == "euclidean":
+        return np.sqrt(np.sum(np.square(vec_A-vec_B)))
+    elif dtype == "manhattan":
+        return sum(abs(v1-v2) for v1, v2 in zip(vec_A,vec_B))
+    elif dtype == "minkowski":
+        return sum(pow(abs(v1-v2), p) for v1, v2 in zip(vec_A, vec_B)) ** (1/p)
+    return   
 
-def getManDist(vec_A, vec_B):
-    return sum(abs(v1-v2) for v1, v2 in zip(vec_A,vec_B))
+def singleLinkageDist(dataset, key, index_list):
+    smallest_distance = math.inf
+    for index1 in key:
+        for index2 in index_list:
+            distance = getDist(dataset[index1], dataset[index2], 2, 'minkowski')
+            if distance < smallest_distance:
+                smallest_distance = distance
+    return smallest_distance
 
-def getMinkDist(vec_A, vec_B, p):
-    return sum(pow(abs(v1-v2), p) for v1, v2 in zip(vec_A, vec_B)) ** (1/p)
 
 def getFeatures (file_num):
     """
