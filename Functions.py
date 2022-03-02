@@ -23,7 +23,7 @@ def singleLinkageDist(dataset, key, index_list):
     return smallest_distance
 
 
-def getFeatures (file_num):
+def getFeatures (file_num, mode="pub"):
     """
     Features:
     option 1: the area of projection, the height (maximum of z), the number of points
@@ -72,6 +72,10 @@ def getFeatures (file_num):
         else:
             count_t3 += 1
 
+    if mode == "dev":
+        return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), z_max, count,
+                         100*count_t1/count, 100*count_t2/count, 100*count_t3/count,
+                         count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
     # return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
     # return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
     return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
@@ -116,3 +120,19 @@ def Accuracy(label_list, ground_truth_dict):
         if max_similar != 0:
             cluster_dict.pop(max_label)
     return
+
+if __name__ == "__main__":
+    features_dict = {}
+    for i in range(5):
+        label = "features_"+str(i)
+        features_dict[label] = np.zeros(9)
+    for i in range(5):
+        for j in range (i*100, (i+1)*100):
+            temp = getFeatures(j, "dev")
+            label_ = "features_"+str(i)
+            features_dict[label_] = features_dict[label_] + temp
+    for i in range(5):
+        label = "features_" + str(i)
+        features_dict[label] = features_dict[label]/100
+        np.set_printoptions(suppress=True, precision=3)
+        print(features_dict[label])
