@@ -109,40 +109,49 @@ def findNeighbor(vec_A, dataset, eps):
     neighbor_list = []
     for i in range(len(dataset)):
         distance = Functions.getDist(vec_A, dataset[i], 0, 'euclidean')
-        if distance < eps:
+        if distance <= eps:
             neighbor_list.append(i)
-    return set(neighbor_list)
-
+    return neighbor_list
 
 def DBSCAN(dataset, eps, min_Pts):
-    k = -1
-    neighbor_list = []
-    core_list = []
-    unvisited_set = set([i for i in range(len(dataset))])
+    # Initialize the list for unvisited vectors, set all as unvisited:
+    unvisited_list = [i for i in range(len(dataset))]
+    # Initialize an empty list for the visited ones:
+    visited_list = []
+    # Set all labels as -1 (outliers)
     label_list = [-1 for i in range(len(dataset))]
-    for i in range(len(dataset)):
-        neighbor_list.append(findNeighbor(dataset[i], dataset, eps))
-        if len(neighbor_list[-1]) > min_Pts:
-            core_list.append(i)
-    core_set = set(core_list)
-    while len(core_set) > 0:
-        k = k+1
-        old_set = copy.deepcopy(unvisited_set)
-        core = random.choice(list(core_set))
-        cluster = []
-        cluster.append(core)
-        unvisited_set.remove(core)
-        while len(cluster) > 0:
-            core_ = cluster.pop(0)
-            if len(neighbor_list[core_]) >= min_Pts:
-                delta = neighbor_list[core_] & unvisited_set
-                delta_list = list(delta)
-                for i in range(len(delta)):
-                    cluster.append(delta_list[i])
-                unvisited_set = unvisited_set - delta
-        cluster_set = old_set-unvisited_set
-        core_set = core_set - cluster_set
-        cluster_list = list(cluster_set)
-        for i in range(len(cluster_list)):
-            label_list[cluster_list[i]] = k
+    # the label/cluster
+    k = -1
+
+    while len(unvisited_list) > 0:
+        # pick a vector randomly for the unvisited list
+        p = random.choice(unvisited_list)
+        unvisited_list.remove(p)
+        visited_list.append(p)
+        # the epsilon-neighborhood:
+        N = findNeighbor(dataset[p], dataset, eps)
+        # if the number of objects in N is bigger than MinPts, then p is a core point
+        if len(N) >= min_Pts:
+            k = k+1
+            label_list[p] = k
+
+            for n in N:
+                # mark items in N as visited if it is not visited
+                if n in unvisited_list:
+                    unvisited_list.remove(n)
+                    visited_list.append(n)
+                # computer the epsilon-neighborhood for n:
+                N_ = findNeighbor(dataset[n], dataset, eps)
+                # if n is a core point, add its epsilon-neighborhood into N
+                if len(N_)  >= min_Pts:
+                    for n_ in N_:
+                        if n_ not in N:
+                            N.append(n_)
+                # the label for n is k if it is -1 (not signed before or not a core point)
+                if label_list[n] == -1:
+                    label_list[n] = k
+        # else label it as -1
+        else:
+            label_list[p] = -1
+
     return label_list

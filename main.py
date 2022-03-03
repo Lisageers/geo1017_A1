@@ -13,7 +13,9 @@ feature_list = np.array(feature_list)
 
 # print(Algorithms.K_Means(feature_list, 5))
 # Functions.Accuracy(Algorithms.K_Means(feature_list, 5), Functions.ground_truth())
-Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
+# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
+Functions.accuracySpread(Algorithms.DBSCAN2(feature_list, 2.25, 4))
+
 # Functions.accuracySpread(Algorithms.K_Means(feature_list, 5))
 
 # print(Algorithms.Hierarchical(feature_list, "single"))
