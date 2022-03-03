@@ -119,7 +119,7 @@ def DBSCAN(dataset, eps, min_Pts):
     # Initialize an empty list for the visited ones:
     visited_list = []
     # Set all labels as -1 (outliers)
-    label_list = [-1 for i in range(len(dataset))]
+    cluster_list = [-1 for i in range(len(dataset))]
     # the label/cluster
     k = -1
 
@@ -133,7 +133,7 @@ def DBSCAN(dataset, eps, min_Pts):
         # if the number of objects in N is bigger than MinPts, then p is a core point
         if len(N) >= min_Pts:
             k = k+1
-            label_list[p] = k
+            cluster_list[p] = k
 
             for n in N:
                 # mark items in N as visited if it is not visited
@@ -148,10 +148,10 @@ def DBSCAN(dataset, eps, min_Pts):
                         if n_ not in N:
                             N.append(n_)
                 # the label for n is k if it is -1 (not signed before or not a core point)
-                if label_list[n] == -1:
-                    label_list[n] = k
+                if cluster_list[n] == -1:
+                    cluster_list[n] = k
         # else label it as -1
         else:
-            label_list[p] = -1
+            cluster_list[p] = -1
 
-    return label_list
+    return cluster_list

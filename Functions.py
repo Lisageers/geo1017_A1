@@ -33,17 +33,18 @@ def getFeatures (file_num, mode="pub"):
     option 5: x-range, y-range, z-range, and the density (the number of points/the volume of bBox)
     """
 
+    # check the path of the file
     try:
         file_name = str(file_num).zfill(3)+'.xyz'
         point_clouds = open(file_path+file_name, 'r')
     except:
         print("No such a file")
         return None
+    # compute the BBox of the point cloud
     x_min = y_min = z_min = sys.float_info.max
     x_max = y_max = z_max = sys.float_info.min
     count = 0
     point_list = []
-#     lines = point_clouds.readlines()
     for line in point_clouds.readlines():
         count += 1
         point = [float(line.split()[0]), float(line.split()[1]), float(line.split()[2])]
@@ -62,6 +63,8 @@ def getFeatures (file_num, mode="pub"):
         if point[2] > z_max:
             z_max = point[2]
 
+    #  The points in Tier 1 are those with the top 1/3 heights, and in Tier 3 are those with the bottom 1/3 heights.
+    #  The rest are in Tier 2.
     count_t1 = count_t2 = count_t3 = 0
     boundary = [z_min, (z_min+z_max)/3, 2*(z_min+z_max)/3, z_max]
     for point in point_list:
@@ -71,11 +74,12 @@ def getFeatures (file_num, mode="pub"):
             count_t2 += 1
         else:
             count_t3 += 1
-
+    # the dev mode is used to create the features table
     if mode == "dev":
         return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), z_max, count,
                          100*count_t1/count, 100*count_t2/count, 100*count_t3/count,
                          count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
+    # options:
     # return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
     # return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
     return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
@@ -121,21 +125,22 @@ def Accuracy(label_list, ground_truth_dict):
             cluster_dict.pop(max_label)
     return
 
-def accuracySpread(label_list):
+def accuracySpread(cluster_list):
     # convert list to dictionary
     cluster_dict = {}
-    for i in range(len(label_list)):
+    for i in range(len(cluster_list)):
         # skip outliers
-        if label_list[i] != -1:
-            # add a numpy array with 5 zeros into the dict, key is label
-            if not label_list[i] in cluster_dict:
-                cluster_dict[label_list[i]] = np.zeros(5)
-                # add 1 to the group
-                cluster_dict[label_list[i]][i//100] = cluster_dict[label_list[i]][i//100] + 1
+        if cluster_list[i] != -1:
+            # add a numpy array with 5 zeros into the dict, the key is the label
+            if not cluster_list[i] in cluster_dict:
+                cluster_dict[cluster_list[i]] = np.zeros(5)
+                # count the times a label shows in each group of 100
+                cluster_dict[cluster_list[i]][i//100] = cluster_dict[cluster_list[i]][i//100] + 1
             else:
-                cluster_dict[label_list[i]][i // 100] = cluster_dict[label_list[i]][i // 100] + 1
+                cluster_dict[cluster_list[i]][i // 100] = cluster_dict[cluster_list[i]][i // 100] + 1
     label_dict = {}
     labels = ['building', 'car', 'fence', 'pole', 'tree']
+    #  the cluster that has a maximum number in the group wins the label of objects
     for i in range(5):
         max_label = -1
         max_num = -99
@@ -150,15 +155,11 @@ def accuracySpread(label_list):
 
     for key1, value1 in label_dict.items():
         print('{0}: {1}'.format(key1, value1))
-    # group_dist = {}
-    # for i in range(5):
-    #     group_dist[i] = {}
-    #     for key1, value1 in cluster_dict.items():
-    #         group_dist[i][key1] = value1[i]
 
     return
 
 if __name__ == "__main__":
+    # output the means for all the features (dev mode)
     features_dict = {}
     for i in range(5):
         label = "features_"+str(i)
