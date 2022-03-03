@@ -1,12 +1,42 @@
+from numpy import dtype
 import Functions
 import numpy as np
+import pandas as pd
 import copy
 import random
 import math
 
-def K_Means():
-    return
+def K_Means(dataset, k):
 
+    # randomly pick k amount of feature points -> centroids of k clusters
+    c_centroids = np.array(random.choices(dataset, k=k))
+    # pick again if any of the centroids are identical
+    while len(np.unique(c_centroids, axis=0)) != k:
+        c_centroids = np.array(random.choices(dataset, k=k))
+
+    label_list = [0 for i in range(len(dataset))]
+    
+    centroid_move = True
+
+    while centroid_move:
+        for i in range(len(dataset)):
+            min_distance = float('inf')
+            for j in range(len(c_centroids)):
+                distance = Functions.getDist(dataset[i], c_centroids[j], 0, 'euclidean')
+                if min_distance > distance:
+                    min_distance = distance
+                    label_list[i] = j
+        # calculate the new centroids by taking the mean of each feature of each cluster
+        new_centroids = pd.DataFrame(dataset).groupby(by=label_list).mean().values
+        
+        # if the new centroids are the same as the 'old' centroids -> centroids are not moving anymore
+        if np.count_nonzero(c_centroids-new_centroids) == 0:
+            centroid_move = False
+
+        # else new centroids will be used
+        else:
+            c_centroids = new_centroids
+    return label_list
 
 def Hierarchical(dataset, linkage):
 
