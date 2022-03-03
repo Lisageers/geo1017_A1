@@ -30,7 +30,7 @@ def getFeatures (file_num, mode="pub"):
     option 2: x-range, y-range, z-range, and the number of points
     option 3: the maximum x or y, the height (maximum of z), the density (the number of points/the area of projection)
     option 4: percentage/ratio of the number of tier 1, 2 and 3 (divided by height)
-    option 2: x-range, y-range, z-range, and the density (the number of points/the volume of bBox)
+    option 5: x-range, y-range, z-range, and the density (the number of points/the volume of bBox)
     """
 
     try:
@@ -84,7 +84,7 @@ def getFeatures (file_num, mode="pub"):
 
 def ground_truth():
     ground_truth_dict = {}
-    label = 0
+    label = -1
     for i in range(500):
         if (i % 100) == 0:
             label += 1
@@ -119,6 +119,43 @@ def Accuracy(label_list, ground_truth_dict):
         # delete most similar cluster
         if max_similar != 0:
             cluster_dict.pop(max_label)
+    return
+
+def accuracySpread(label_list):
+    # convert list to dictionary
+    cluster_dict = {}
+    for i in range(len(label_list)):
+        # skip outliers
+        if label_list[i] != -1:
+            # add a numpy array with 5 zeros into the dict, key is label
+            if not label_list[i] in cluster_dict:
+                cluster_dict[label_list[i]] = np.zeros(5)
+                # add 1 to the group
+                cluster_dict[label_list[i]][i//100] = cluster_dict[label_list[i]][i//100] + 1
+            else:
+                cluster_dict[label_list[i]][i // 100] = cluster_dict[label_list[i]][i // 100] + 1
+    label_dict = {}
+    labels = ['building', 'car', 'fence', 'pole', 'tree']
+    for i in range(5):
+        max_label = -1
+        max_num = -99
+        max_array = np.zeros(5)
+        for key1, value1 in cluster_dict.items():
+            if value1[i] > max_num:
+                max_label = key1
+                max_num = value1[i]
+                max_array = value1
+        label_dict[labels[i]] = max_array
+        cluster_dict.pop(max_label)
+
+    for key1, value1 in label_dict.items():
+        print('{0}: {1}'.format(key1, value1))
+    # group_dist = {}
+    # for i in range(5):
+    #     group_dist[i] = {}
+    #     for key1, value1 in cluster_dict.items():
+    #         group_dist[i][key1] = value1[i]
+
     return
 
 if __name__ == "__main__":
