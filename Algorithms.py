@@ -49,9 +49,7 @@ def Hierarchical(dataset, linkage):
     distance_dict = {}
     for i in range(len(dataset)):
         for j in range(len(dataset)):
-                # distance = Functions.getDist(dataset[i], dataset[j], 0, 'euclidean')
-                # distance = Functions.getDist(dataset[i], dataset[j], 0,'manhattan')
-                distance = Functions.getDist(dataset[i], dataset[j], 2, 'minkowski')
+                distance = Functions.getDist(dataset[i], dataset[j], 1, 'minkowski')
                 if i != j:
                     sorted_indices = sorted([i, j])
                     distance_dict[((sorted_indices[0],), (sorted_indices[1],))] = distance              
@@ -59,6 +57,10 @@ def Hierarchical(dataset, linkage):
     while len(label_dict.keys()) > 5:
         # find closest points
         indexes_closest = min(distance_dict, key=distance_dict.get)
+        
+        # put distance treshold at 50 
+        if distance_dict[indexes_closest] > 50:
+            break
 
         # update label dict
         average_c1 = label_dict[indexes_closest[0]]
@@ -80,24 +82,19 @@ def Hierarchical(dataset, linkage):
             if key[0] in indexes_closest:
                 distance_dict.pop(key)
                 if linkage == "average":
-                    # distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], 0, 'euclidean')
-                    # distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], 0, 'manhattan')
-                    distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], 2, 'minkowski')
+                    distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], 1, 'minkowski')
                 
-                elif linkage == "single":
-                    distance_dict[(tuple(index_list), key[1])] = Functions.singleLinkageDist(dataset, key[1], index_list)
+                elif linkage == "complete":
+                    distance_dict[(tuple(index_list), key[1])] = Functions.completeLinkageDist(dataset, key[1], index_list)
 
            
             elif key[1] in indexes_closest:
                 distance_dict.pop(key)
                 if linkage == "average":
-                    # distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], 0, 'euclidean')
-                    # distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], 0, 'manhattan')
-                    distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], 2, 'minkowski')
+                    distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], 1, 'minkowski')
                 
-                elif linkage == "single":
-                    distance_dict[(tuple(index_list), key[0])] = Functions.singleLinkageDist(dataset, key[0], index_list)
-
+                elif linkage == "complete":
+                    distance_dict[(tuple(index_list), key[0])] = Functions.completeLinkageDist(dataset, key[0], index_list)
 
     # convert output to list
     count = 1

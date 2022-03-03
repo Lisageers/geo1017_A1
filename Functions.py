@@ -13,14 +13,14 @@ def getDist(vec_A, vec_B, p, dtype):
         return sum(pow(abs(v1-v2), p) for v1, v2 in zip(vec_A, vec_B)) ** (1/p)
     return   
 
-def singleLinkageDist(dataset, key, index_list):
-    smallest_distance = math.inf
+def completeLinkageDist(dataset, key, index_list):
+    largest_distance = -math.inf
     for index1 in key:
         for index2 in index_list:
-            distance = getDist(dataset[index1], dataset[index2], 2, 'minkowski')
-            if distance < smallest_distance:
-                smallest_distance = distance
-    return smallest_distance
+            distance = getDist(dataset[index1], dataset[index2], 1, 'minkowski')
+            if distance > largest_distance:
+                largest_distance = distance
+    return largest_distance
 
 
 def getFeatures (file_num, mode="pub"):
