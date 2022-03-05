@@ -1,6 +1,9 @@
 import sys
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 import math
+import Algorithms
 
 file_path = 'data/pointclouds/'
 
@@ -125,7 +128,7 @@ def Accuracy(label_list, ground_truth_dict):
             cluster_dict.pop(max_label)
     return
 
-def accuracySpread(cluster_list):
+def accuracySpread(cluster_list, mode="void"):
     # convert list to dictionary
     cluster_dict = {}
     for i in range(len(cluster_list)):
@@ -153,10 +156,56 @@ def accuracySpread(cluster_list):
         label_dict[labels[i]] = max_array
         cluster_dict.pop(max_label)
 
-    for key1, value1 in label_dict.items():
-        print('{0}: {1}'.format(key1, value1))
+    if mode == "dict":
+        return label_dict
+    else:
+        for key1, value1 in label_dict.items():
+            print('{0}: {1}'.format(key1, value1))
+        return
 
+def plotAccuracy(k=5, linkage="complete", eps=2.25, min_Pts=4):
+    feature_list = []
+    for i in range(500):
+        feature_list.append(getFeatures(i))
+    feature_list = np.array(feature_list)
+    dict_k = accuracySpread(Algorithms.K_Means(feature_list, k), mode="dict")
+    dict_h = accuracySpread(Algorithms.Hierarchical(feature_list, linkage), mode="dict")
+    dict_d = accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts), mode="dict")
+    x_ = []
+    y_k = []
+    y_h = []
+    y_d = []
+    index = 0
+    print("K-means: ")
+    for key1, value1 in dict_k.items():
+        print('{0}: {1}'.format(key1, value1))
+        x_.append(key1)
+        y_k.append(value1[index])
+        index = index+1
+    index = 0
+    print("Hierarchical: ")
+    for key1, value1 in dict_h.items():
+        print('{0}: {1}'.format(key1, value1))
+        y_h.append(value1[index])
+        index = index+1
+    index = 0
+    print("DBSCAN: ")
+    for key1, value1 in dict_d.items():
+        print('{0}: {1}'.format(key1, value1))
+        y_d.append(value1[index])
+        index = index+1
+
+    plt.figure(figsize=(10, 8), layout='constrained')
+    plt.plot(x_, y_k, label='K-means')
+    plt.plot(x_, y_h, label='Hierarchical')
+    plt.plot(x_, y_d, label='DBSCAN')
+    plt.xlabel('Labels')
+    plt.ylabel('Accuracy')
+    plt.title('The accuracy of different label using different algorithms')
+    plt.legend()
+    plt.show()
     return
+
 
 if __name__ == "__main__":
     # output the means for all the features (dev mode)

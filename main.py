@@ -10,18 +10,25 @@ for i in range(500):
     feature_list.append(Functions.getFeatures(i))
 feature_list = np.array(feature_list)
 
+
+Functions.plotAccuracy()
 # KDistance.plotKDistance(feature_list)
 # for i in range(len(feature_list)):
 #     print(feature_list[i])
 
 # print(Algorithms.K_Means(feature_list, 5))
 # Functions.Accuracy(Algorithms.K_Means(feature_list, 5), Functions.ground_truth())
-Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
+# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
+# Functions.accuracySpread(Algorithms.K_Means(feature_list, 5))
+# Functions.accuracySpread(Algorithms.Hierarchical(feature_list, "complete"))
+# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
+
+# Functions.accuracySpread(Algorithms.Hierarchical(feature_list, "average"))
 # Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
 
 # Functions.accuracySpread(Algorithms.K_Means(feature_list, 5))
 
-# print(Algorithms.Hierarchical(feature_list, "single"))
+# print(Algorithms.Hierarchical(feature_list, "complete"))
 # Functions.Accuracy(Algorithms.Hierarchical(feature_list, "single"), Functions.ground_truth())
 
 # print(Algorithms.DBSCAN(feature_list, 2.5, 5))
