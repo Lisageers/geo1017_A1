@@ -6,7 +6,7 @@ import copy
 import random
 import math
 
-def K_Means(dataset, k):
+def K_Means(dataset, k, dtype):
 
     # randomly pick k amount of feature points -> centroids of k clusters
     c_centroids = np.array(random.choices(dataset, k=k))
@@ -22,7 +22,7 @@ def K_Means(dataset, k):
         for i in range(len(dataset)):
             min_distance = float('inf')
             for j in range(len(c_centroids)):
-                distance = Functions.getDist(dataset[i], c_centroids[j], 0, 'euclidean')
+                distance = Functions.getDist(dataset[i], c_centroids[j], dtype)
                 if min_distance > distance:
                     min_distance = distance
                     label_list[i] = j
@@ -38,7 +38,7 @@ def K_Means(dataset, k):
             c_centroids = new_centroids
     return label_list
 
-def Hierarchical(dataset, linkage):
+def Hierarchical(dataset, linkage, dtype):
 
     # put each feature in a separate cluster
     label_list = [i for i in range(len(dataset))]
@@ -49,7 +49,7 @@ def Hierarchical(dataset, linkage):
     distance_dict = {}
     for i in range(len(dataset)):
         for j in range(len(dataset)):
-                distance = Functions.getDist(dataset[i], dataset[j], 1, 'minkowski')
+                distance = Functions.getDist(dataset[i], dataset[j], dtype)
                 if i != j:
                     sorted_indices = sorted([i, j])
                     distance_dict[((sorted_indices[0],), (sorted_indices[1],))] = distance              
@@ -82,19 +82,19 @@ def Hierarchical(dataset, linkage):
             if key[0] in indexes_closest:
                 distance_dict.pop(key)
                 if linkage == "average":
-                    distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], 1, 'minkowski')
+                    distance_dict[(tuple(index_list), key[1])] = Functions.getDist(average_combined, label_dict[key[1]], dtype)
                 
                 elif linkage == "complete":
-                    distance_dict[(tuple(index_list), key[1])] = Functions.completeLinkageDist(dataset, key[1], index_list)
+                    distance_dict[(tuple(index_list), key[1])] = Functions.completeLinkageDist(dataset, key[1], index_list, dtype)
 
            
             elif key[1] in indexes_closest:
                 distance_dict.pop(key)
                 if linkage == "average":
-                    distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], 1, 'minkowski')
+                    distance_dict[(tuple(index_list), key[0])] = Functions.getDist(average_combined, label_dict[key[0]], dtype)
                 
                 elif linkage == "complete":
-                    distance_dict[(tuple(index_list), key[0])] = Functions.completeLinkageDist(dataset, key[0], index_list)
+                    distance_dict[(tuple(index_list), key[0])] = Functions.completeLinkageDist(dataset, key[0], index_list, dtype)
 
     # convert output to list
     count = 1
@@ -105,15 +105,15 @@ def Hierarchical(dataset, linkage):
     return label_list
 
 
-def findNeighbor(vec_A, dataset, eps):
+def findNeighbor(vec_A, dataset, eps, dtype):
     neighbor_list = []
     for i in range(len(dataset)):
-        distance = Functions.getDist(vec_A, dataset[i], 0, 'euclidean')
+        distance = Functions.getDist(vec_A, dataset[i], dtype)
         if distance <= eps:
             neighbor_list.append(i)
     return neighbor_list
 
-def DBSCAN(dataset, eps, min_Pts):
+def DBSCAN(dataset, eps, min_Pts, dtype):
     # Initialize the list for unvisited vectors, set all as unvisited:
     unvisited_list = [i for i in range(len(dataset))]
     # Initialize an empty list for the visited ones:
@@ -129,7 +129,7 @@ def DBSCAN(dataset, eps, min_Pts):
         unvisited_list.remove(p)
         visited_list.append(p)
         # the epsilon-neighborhood:
-        N = findNeighbor(dataset[p], dataset, eps)
+        N = findNeighbor(dataset[p], dataset, eps, dtype)
         # if the number of objects in N is bigger than MinPts, then p is a core point
         if len(N) >= min_Pts:
             k = k+1
@@ -141,7 +141,7 @@ def DBSCAN(dataset, eps, min_Pts):
                     unvisited_list.remove(n)
                     visited_list.append(n)
                 # computer the epsilon-neighborhood for n:
-                N_ = findNeighbor(dataset[n], dataset, eps)
+                N_ = findNeighbor(dataset[n], dataset, eps, dtype)
                 # if n is a core point, add its epsilon-neighborhood into N
                 if len(N_)  >= min_Pts:
                     for n_ in N_:

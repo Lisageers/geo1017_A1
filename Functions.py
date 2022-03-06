@@ -7,26 +7,27 @@ import Algorithms
 
 file_path = 'data/pointclouds/'
 
-def getDist(vec_A, vec_B, p, dtype):
+def getDist(vec_A, vec_B, dtype):
     if dtype == "euclidean":
         return np.sqrt(np.sum(np.square(vec_A-vec_B)))
-    elif dtype == "manhattan":
+    if dtype == "manhattan":
         return sum(abs(v1-v2) for v1, v2 in zip(vec_A,vec_B))
-    elif dtype == "minkowski":
-        return sum(pow(abs(v1-v2), p) for v1, v2 in zip(vec_A, vec_B)) ** (1/p)
+    else:
+        print('"' + str(dtype) + '" distance type does not exist. Select distance type "euclidean" or "manhattan".')
+        exit()
     return   
 
-def completeLinkageDist(dataset, key, index_list):
+def completeLinkageDist(dataset, key, index_list, dtype):
     largest_distance = -math.inf
     for index1 in key:
         for index2 in index_list:
-            distance = getDist(dataset[index1], dataset[index2], 1, 'minkowski')
+            distance = getDist(dataset[index1], dataset[index2], dtype)
             if distance > largest_distance:
                 largest_distance = distance
     return largest_distance
 
 
-def getFeatures (file_num, mode="pub"):
+def getFeatures (file_num, option, mode="pub"):
     """
     Features:
     option 1: the area of projection, the height (maximum of z), the number of points
@@ -83,11 +84,20 @@ def getFeatures (file_num, mode="pub"):
                          100*count_t1/count, 100*count_t2/count, 100*count_t3/count,
                          count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
     # options:
-    # return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
-    # return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
-    return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
-    # return np.array([np.maximum(abs(x_max-x_min), abs(y_max-y_min)), z_max, count/(abs(x_max-x_min)*abs(y_max-y_min))])
-    # return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
+    if option == 1:
+        return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
+    if option == 2:
+        return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
+    if option == 3:
+        return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
+    if option == 4:
+        return np.array([np.maximum(abs(x_max-x_min), abs(y_max-y_min)), z_max, count/(abs(x_max-x_min)*abs(y_max-y_min))])
+    if option == 5:
+        return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
+    else:
+        print('Option "' + str(option) + '" does not exist. Select option 1-5.')
+        exit()
+    return
 
 def ground_truth():
     ground_truth_dict = {}
@@ -163,14 +173,15 @@ def accuracySpread(cluster_list, mode="void"):
             print('{0}: {1}'.format(key1, value1))
         return
 
-def plotAccuracy(k=5, linkage="complete", eps=2.25, min_Pts=4):
-    feature_list = []
-    for i in range(500):
-        feature_list.append(getFeatures(i))
-    feature_list = np.array(feature_list)
-    dict_k = accuracySpread(Algorithms.K_Means(feature_list, k), mode="dict")
-    dict_h = accuracySpread(Algorithms.Hierarchical(feature_list, linkage), mode="dict")
-    dict_d = accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts), mode="dict")
+def plotAccuracy(dict_k, dict_h, dict_d):
+# def plotAccuracy(option, dtype, k=5, linkage="complete", eps=2.25, min_Pts=4):
+#     feature_list = []
+#     for i in range(500):
+#         feature_list.append(getFeatures(i, option))
+#     feature_list = np.array(feature_list)
+#     dict_k = accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
+#     dict_h = accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype), mode="dict")
+#     dict_d = accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
     x_ = []
     y_k = []
     y_h = []
@@ -195,7 +206,7 @@ def plotAccuracy(k=5, linkage="complete", eps=2.25, min_Pts=4):
         y_d.append(value1[index])
         index = index+1
 
-    plt.figure(figsize=(10, 8), layout='constrained')
+    plt.figure(figsize=(10, 8))
     plt.plot(x_, y_k, label='K-means')
     plt.plot(x_, y_h, label='Hierarchical')
     plt.plot(x_, y_d, label='DBSCAN')
