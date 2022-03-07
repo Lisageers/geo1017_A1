@@ -74,45 +74,13 @@ gives the spread of DBSCAN
 """
 Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype))
 
+"""
+Final results, returns 3 spreads and one graph (with all three algorithms)
+adjust the variables seperately inside the function call to the optimal values.
+"""
+
 # dict_k = Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
 # dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype, distance_threshold), mode="dict")
 # dict_d = Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
 
 # Functions.plotAccuracy(dict_k, dict_h, dict_d)
-
-
-
-
-# Functions.plotAccuracy(option, dtype)
-
-# KDistance.plotKDistance(feature_list, dtype)
-# for i in range(len(feature_list)):
-#     print(feature_list[i])
-
-# print(Algorithms.K_Means(feature_list, 5))
-# Functions.Accuracy(Algorithms.K_Means(feature_list, 5), Functions.ground_truth())
-# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
-# Functions.accuracySpread(Algorithms.K_Means(feature_list, 5))
-# Functions.accuracySpread(Algorithms.Hierarchical(feature_list, "complete"))
-# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
-
-# Functions.accuracySpread(Algorithms.Hierarchical(feature_list, "average"))
-# Functions.accuracySpread(Algorithms.DBSCAN(feature_list, 2.25, 4))
-
-# Functions.accuracySpread(Algorithms.K_Means(feature_list, 5))
-
-# print(Algorithms.Hierarchical(feature_list, "complete"))
-# Functions.Accuracy(Algorithms.Hierarchical(feature_list, "single"), Functions.ground_truth())
-
-# print(Algorithms.DBSCAN(feature_list, 2.5, 5))
-# Functions.Accuracy(Algorithms.DBSCAN(feature_list, 2.5, 5), Functions.ground_truth())
-
-# clustering = DBSCAN(eps=2.5, min_samples=5).fit(feature_list)
-# print(clustering.labels_)
-
-# Z = hierarchy.linkage(feature_list, linkage)
-# plt.figure()
-# dn = hierarchy.dendrogram(Z)
-# plt.ylabel("Distance")
-# plt.title("Dendrogram linkage")
-# plt.show()
