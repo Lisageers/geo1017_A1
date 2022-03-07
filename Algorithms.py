@@ -38,7 +38,7 @@ def K_Means(dataset, k, dtype):
             c_centroids = new_centroids
     return label_list
 
-def Hierarchical(dataset, linkage, dtype):
+def Hierarchical(dataset, linkage, dtype, threshold):
 
     # put each feature in a separate cluster
     label_list = [i for i in range(len(dataset))]
@@ -59,7 +59,7 @@ def Hierarchical(dataset, linkage, dtype):
         indexes_closest = min(distance_dict, key=distance_dict.get)
         
         # put distance treshold at 50 
-        if distance_dict[indexes_closest] > 50:
+        if distance_dict[indexes_closest] > threshold:
             break
 
         # update label dict
@@ -87,6 +87,8 @@ def Hierarchical(dataset, linkage, dtype):
                 elif linkage == "complete":
                     distance_dict[(tuple(index_list), key[1])] = Functions.completeLinkageDist(dataset, key[1], index_list, dtype)
 
+                elif linkage == "single":
+                    distance_dict[(tuple(index_list), key[1])] = Functions.singleLinkageDist(dataset, key[1], index_list, dtype)
            
             elif key[1] in indexes_closest:
                 distance_dict.pop(key)
@@ -95,6 +97,9 @@ def Hierarchical(dataset, linkage, dtype):
                 
                 elif linkage == "complete":
                     distance_dict[(tuple(index_list), key[0])] = Functions.completeLinkageDist(dataset, key[0], index_list, dtype)
+                
+                elif linkage == "single":
+                    distance_dict[(tuple(index_list), key[0])] = Functions.singleLinkageDist(dataset, key[0], index_list, dtype)
 
     # convert output to list
     count = 1

@@ -26,6 +26,15 @@ def completeLinkageDist(dataset, key, index_list, dtype):
                 largest_distance = distance
     return largest_distance
 
+def singleLinkageDist(dataset, key, index_list, dtype):
+    smallest_distance = math.inf
+    for index1 in key:
+        for index2 in index_list:
+            distance = getDist(dataset[index1], dataset[index2], dtype)
+            if distance < smallest_distance:
+                smallest_distance = distance
+    return smallest_distance
+
 
 def getFeatures (file_num, option, mode="pub"):
     """

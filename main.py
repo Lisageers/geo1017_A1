@@ -3,6 +3,8 @@ import Algorithms
 import KDistance
 # import sklearn
 # from sklearn.cluster import DBSCAN
+from scipy.cluster import hierarchy
+import matplotlib.pyplot as plt
 import numpy as np
 
 """
@@ -25,12 +27,14 @@ dtype = "manhattan"
 """
 Algorithm variables:
 k = number of clusters (given k = 5)
-linkage = "average" or "complete"
+linkage = "average","complete or "single"
+distance_threshold = maximal distance of two clusters
 eps = search radius
 min_Pts = minimum points required to form a cluster
 """
 k = 5
-linkage = "complete"
+linkage = "single"
+distance_threshold = 50
 eps = 2.25
 min_Pts = 4
 
@@ -40,7 +44,7 @@ for i in range(500):
 feature_list = np.array(feature_list)
 
 dict_k = Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
-dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype), mode="dict")
+dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype, distance_threshold), mode="dict")
 dict_d = Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
 
 Functions.plotAccuracy(dict_k, dict_h, dict_d)
@@ -71,3 +75,10 @@ Functions.plotAccuracy(dict_k, dict_h, dict_d)
 
 # clustering = DBSCAN(eps=2.5, min_samples=5).fit(feature_list)
 # print(clustering.labels_)
+
+# Z = hierarchy.linkage(feature_list, linkage)
+# plt.figure()
+# dn = hierarchy.dendrogram(Z)
+# plt.ylabel("Distance")
+# plt.title("Dendrogram linkage")
+# plt.show()
