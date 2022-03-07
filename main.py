@@ -13,14 +13,14 @@ option 1:  x-range, y-range, z-range, the height (maximum of z);
 option 2: x-range, y-range, z-range, and the density (the number of points/the volume of bBox);
 option 3: the height (maximum of z), percentage/ratio of the number of tier 1 (divided by height), the density (the number of points/the area of projection).
 """
-option = 1
+option = 3
 
 """
 Distance type:
 'euclidean': squared difference
 'manhattan': pairwise absolute difference
 """
-dtype = "euclidean"
+dtype = "manhattan"
 
 """
 Algorithm variables:
@@ -33,14 +33,17 @@ min_Pts = minimum points required to form a cluster (4 or 8)
 k = 5
 linkage = "complete"
 distance_threshold = 50
-eps = 2.25
 min_Pts = 4
+eps = 2.75
 
 feature_list = []
 for i in range(500):
     feature_list.append(Functions.getFeatures(i, option))
 feature_list = np.array(feature_list)
 
+"""
+plots Dendogram in order to find the distance threshold for the cutoff
+"""
 # if dtype == "manhattan":
 #     Z = hierarchy.linkage(feature_list, linkage, 'cityblock')
 #     plt.figure()
@@ -56,13 +59,28 @@ feature_list = np.array(feature_list)
 #     plt.title("Dendrogram linkage")
 #     plt.show()
 
-KDistance.plotKDistance(feature_list, dtype, min_Pts)
+"""
+plots K-distance graph in order to find the 'elbow', value for eps
+"""
+# KDistance.plotKDistance(feature_list, dtype, min_Pts)
+
+"""
+gives the spread of kmeans
+"""
+# Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype))
+
+"""
+gives the spread of DBSCAN
+"""
+Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype))
 
 # dict_k = Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
 # dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype, distance_threshold), mode="dict")
 # dict_d = Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
 
 # Functions.plotAccuracy(dict_k, dict_h, dict_d)
+
+
 
 
 # Functions.plotAccuracy(option, dtype)
