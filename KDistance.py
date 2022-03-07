@@ -8,7 +8,7 @@ def plotKDistance(feature_list, k=6):
     for i in range(len(feature_list)):
         dists_ = []
         for j in range (len(feature_list)):
-            dists_.append(Functions.getDist(feature_list[j], feature_list[i], 0, 'euclidean'))
+            dists_.append(Functions.getDist(feature_list[j], feature_list[i], 'euclidean'))
         dists_ = np.array(dists_)
         dists_ = np.sort(dists_)
         k_dists.append(dists_[k])
@@ -31,7 +31,8 @@ def plotKDistance(feature_list, k=6):
 
 if __name__ == "__main__":
     feature_list = []
+    option = 1
     for i in range(500):
-        feature_list.append(Functions.getFeatures(i))
+        feature_list.append(Functions.getFeatures(i, option))
     feature_list = np.array(feature_list)
     plotKDistance(feature_list)
