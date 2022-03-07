@@ -39,11 +39,9 @@ def singleLinkageDist(dataset, key, index_list, dtype):
 def getFeatures (file_num, option, mode="pub"):
     """
     Features:
-    option 1: the area of projection, the height (maximum of z), the number of points
-    option 2: x-range, y-range, z-range, and the number of points
-    option 3: the maximum x or y, the height (maximum of z), the density (the number of points/the area of projection)
-    option 4: percentage/ratio of the number of tier 1, 2 and 3 (divided by height)
-    option 5: x-range, y-range, z-range, and the density (the number of points/the volume of bBox)
+    option 1:  x-range, y-range, z-range, the height (maximum of z);
+    option 2: x-range, y-range, z-range, and the density (the number of points/the volume of bBox);
+    option 3: the height (maximum of z), percentage/ratio of the number of tier 1 (divided by height), the density (the number of points/the area of projection).
     """
 
     # check the path of the file
@@ -94,15 +92,15 @@ def getFeatures (file_num, option, mode="pub"):
                          count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
     # options:
     if option == 1:
-        return np.array([abs(x_max-x_min)*abs(y_max-y_min), z_max, count])
+        return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), z_max])
     if option == 2:
-        return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min)])
-    if option == 3:
         return np.array([abs(x_max-x_min), abs(y_max-y_min), abs(z_max-z_min), count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
-    if option == 4:
-        return np.array([np.maximum(abs(x_max-x_min), abs(y_max-y_min)), z_max, count/(abs(x_max-x_min)*abs(y_max-y_min))])
-    if option == 5:
-        return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
+    if option == 3:
+        return np.array([z_max, 100*count_t1/count, count/(abs(x_max-x_min)*abs(y_max-y_min)*abs(z_max-z_min))])
+    # if option == 4:
+    #     return np.array([np.maximum(abs(x_max-x_min), abs(y_max-y_min)), z_max, count/(abs(x_max-x_min)*abs(y_max-y_min))])
+    # if option == 5:
+    #     return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
     else:
         print('Option "' + str(option) + '" does not exist. Select option 1-5.')
         exit()
