@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 import Functions
 
-def plotKDistance(feature_list, k=6):
+def plotKDistance(feature_list, k=4):
     k_dists = []
     for i in range(len(feature_list)):
         dists_ = []
