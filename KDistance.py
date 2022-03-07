@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 
 import Functions
 
-def plotKDistance(feature_list, k=4):
+def plotKDistance(feature_list, dtype, k):
     k_dists = []
     for i in range(len(feature_list)):
         dists_ = []
         for j in range (len(feature_list)):
-            dists_.append(Functions.getDist(feature_list[j], feature_list[i], 'euclidean'))
+            dists_.append(Functions.getDist(feature_list[j], feature_list[i], dtype))
         dists_ = np.array(dists_)
         dists_ = np.sort(dists_)
         k_dists.append(dists_[k])

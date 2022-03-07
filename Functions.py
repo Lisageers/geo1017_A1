@@ -102,7 +102,7 @@ def getFeatures (file_num, option, mode="pub"):
     # if option == 5:
     #     return np.array([100*count_t1/count, 100*count_t2/count, 100*count_t3/count])
     else:
-        print('Option "' + str(option) + '" does not exist. Select option 1-5.')
+        print('Option "' + str(option) + '" does not exist. Select option 1-3.')
         exit()
     return
 
@@ -219,7 +219,7 @@ def plotAccuracy(dict_k, dict_h, dict_d):
     plt.plot(x_, y_d, label='DBSCAN')
     plt.xlabel('Labels')
     plt.ylabel('Accuracy')
-    plt.title('The accuracy of different label using different algorithms')
+    plt.title('The accuracy of different labels using different algorithms')
     plt.legend()
     plt.show()
     return

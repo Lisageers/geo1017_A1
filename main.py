@@ -9,31 +9,29 @@ import numpy as np
 
 """
 Features:
-option 1: the area of projection, the height (maximum of z), the number of points
-option 2: x-range, y-range, z-range, and the number of points
-option 3: the maximum x or y, the height (maximum of z), the density (the number of points/the area of projection)
-option 4: percentage/ratio of the number of tier 1, 2 and 3 (divided by height)
-option 5: x-range, y-range, z-range, and the density (the number of points/the volume of bBox)
+option 1:  x-range, y-range, z-range, the height (maximum of z);
+option 2: x-range, y-range, z-range, and the density (the number of points/the volume of bBox);
+option 3: the height (maximum of z), percentage/ratio of the number of tier 1 (divided by height), the density (the number of points/the area of projection).
 """
-option = 3
+option = 1
 
 """
 Distance type:
-'euclidian': squared difference
+'euclidean': squared difference
 'manhattan': pairwise absolute difference
 """
-dtype = "manhattan"
+dtype = "euclidean"
 
 """
 Algorithm variables:
 k = number of clusters (given k = 5)
-linkage = "average","complete or "single"
-distance_threshold = maximal distance of two clusters
+linkage = "single", "complete or "average"
+distance_threshold = maximal distance of two clusters (20, 30, 50)
 eps = search radius
-min_Pts = minimum points required to form a cluster
+min_Pts = minimum points required to form a cluster (4 or 8)
 """
 k = 5
-linkage = "single"
+linkage = "complete"
 distance_threshold = 50
 eps = 2.25
 min_Pts = 4
@@ -43,15 +41,33 @@ for i in range(500):
     feature_list.append(Functions.getFeatures(i, option))
 feature_list = np.array(feature_list)
 
-dict_k = Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
-dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype, distance_threshold), mode="dict")
-dict_d = Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
+# if dtype == "manhattan":
+#     Z = hierarchy.linkage(feature_list, linkage, 'cityblock')
+#     plt.figure()
+#     dn = hierarchy.dendrogram(Z)
+#     plt.ylabel("Distance")
+#     plt.title("Dendrogram linkage")
+#     plt.show()
+# else:
+#     Z = hierarchy.linkage(feature_list, linkage)
+#     plt.figure()
+#     dn = hierarchy.dendrogram(Z)
+#     plt.ylabel("Distance")
+#     plt.title("Dendrogram linkage")
+#     plt.show()
 
-Functions.plotAccuracy(dict_k, dict_h, dict_d)
+KDistance.plotKDistance(feature_list, dtype, min_Pts)
+
+# dict_k = Functions.accuracySpread(Algorithms.K_Means(feature_list, k, dtype), mode="dict")
+# dict_h = Functions.accuracySpread(Algorithms.Hierarchical(feature_list, linkage, dtype, distance_threshold), mode="dict")
+# dict_d = Functions.accuracySpread(Algorithms.DBSCAN(feature_list, eps, min_Pts, dtype), mode="dict")
+
+# Functions.plotAccuracy(dict_k, dict_h, dict_d)
+
 
 # Functions.plotAccuracy(option, dtype)
 
-# KDistance.plotKDistance(feature_list)
+# KDistance.plotKDistance(feature_list, dtype)
 # for i in range(len(feature_list)):
 #     print(feature_list[i])
 
