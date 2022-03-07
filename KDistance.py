@@ -32,7 +32,8 @@ def plotKDistance(feature_list, k=4):
 if __name__ == "__main__":
     feature_list = []
     option = 1
+    k = 4
     for i in range(500):
         feature_list.append(Functions.getFeatures(i, option))
     feature_list = np.array(feature_list)
-    plotKDistance(feature_list)
+    plotKDistance(feature_list, k)
